@@ -79,12 +79,28 @@ def search_by_category_id(category_id):
 
     products = data.get("products", [])
     status = "found" if products else "not_found"
+    category_name = data.get("category_name")
+    breadcrumb = data.get("breadcrumb")
+
+    # ---------- แนบ breadcrumb เข้าไปในสินค้าแต่ละชิ้น ----------
+    # เดิม breadcrumb อยู่แค่บนสุดของไฟล์ (ระดับเดียวกับ products[] ทั้ง
+    # ก้อน) สินค้าแต่ละชิ้นไม่มี field นี้ของตัวเอง แต่ downstream
+    # (product_view_model.py) รับแค่ product dict ทีละชิ้น ไม่เห็นระดับ
+    # บนสุดของไฟล์อีกแล้ว จึงต้องแนบสำเนา breadcrumb เข้าไปใน key ที่ตั้งชื่อ
+    # ให้ไม่ชนกับ field จริงของ Lotus's ("_category_breadcrumb" ขึ้นต้น
+    # ด้วย _ ให้รู้ว่าเป็น field ที่เราเติมเองภายหลัง ไม่ใช่ของ Lotus's)
+    # ทำ .copy() กันแก้ dict ต้นฉบับที่โหลดมาจากไฟล์โดยไม่ตั้งใจ
+    enriched_products = []
+    for p in products:
+        p_copy = dict(p)
+        p_copy["_category_breadcrumb"] = breadcrumb
+        enriched_products.append(p_copy)
 
     result = {
         "status": status,
-        "products": products,
-        "category_name": data.get("category_name"),
-        "breadcrumb": data.get("breadcrumb"),
+        "products": enriched_products,
+        "category_name": category_name,
+        "breadcrumb": breadcrumb,
     }
 
     print(f"[lotus_searching] category_id={category_id} ({result['category_name']!r}) "

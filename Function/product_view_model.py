@@ -22,6 +22,9 @@ Schema ของ view model ที่คืนออกไป:
         "price_current": number หรือ None,
         "price_original": number หรือ None (มีค่าเฉพาะตอนลด % เท่านั้น),
         "badge": {"type": str, "text": str, "color": str} หรือ None,
+        "breadcrumb": str หรือ None (มีเฉพาะสินค้าจาก local เท่านั้น
+                      เช่น "อาหารแห้งและเครื่องปรุง > ซอสปรุงรสและทำอาหาร > น้ำปลา"
+                      สินค้าจาก fallback ค้นสดจะเป็น None เสมอ),
     }
 
 --------------------------------
@@ -120,6 +123,13 @@ def build_view_model(product: dict) -> dict:
     # เป็นตัวเลขเดียวกันเท่านั้น ห้ามใช้ sku ประกอบลิงก์เด็ดขาด
     link = f"https://www.lotuss.com/th/product/{url_key}" if url_key else None
 
+    # breadcrumb มีเฉพาะสินค้าที่มาจาก local (data/all_product/) เท่านั้น
+    # (lotus_searching.py แนบเข้ามาให้แล้วใน key "_category_breadcrumb")
+    # สินค้าจาก fallback ค้นสด (scrap_current_product.py) จะไม่มี field
+    # นี้เลย -> ได้ None -> flex_builder.py จะไม่โชว์บรรทัดนี้เฉย ๆ ไม่ error
+    breadcrumb_list = product.get("_category_breadcrumb")
+    breadcrumb_text = " > ".join(breadcrumb_list) if breadcrumb_list else None
+
     return {
         "name": name,
         "image_url": image_url,
@@ -127,6 +137,7 @@ def build_view_model(product: dict) -> dict:
         "price_current": price_current,
         "price_original": price_original,
         "badge": badge,
+        "breadcrumb": breadcrumb_text,
     }
 
 

@@ -37,6 +37,7 @@ def build_bubble(view_model: dict) -> BubbleContainer:
     price_current = view_model.get("price_current")
     price_original = view_model.get("price_original")
     badge = view_model.get("badge")
+    breadcrumb = view_model.get("breadcrumb")
 
     # ตัดชื่อสินค้าไม่ให้ยาวเกินไปจนล้น bubble (กันชื่อยาว ๆ ที่เจอจริง
     # เช่น "โลตัส ชุดเนื้อสไลซ์ปาร์ตี้ 800 กรัม" ยังพอไหว แต่บางชื่อยาวกว่านี้เยอะ)
@@ -64,6 +65,14 @@ def build_bubble(view_model: dict) -> BubbleContainer:
     body_contents = [
         TextComponent(text=display_name, weight="bold", size="md", wrap=True),
     ]
+
+    # breadcrumb มีเฉพาะสินค้าจาก local (data/all_product/) เท่านั้น
+    # สินค้าจาก fallback ค้นสด (scrap_current_product.py) จะเป็น None
+    # -> ไม่แสดงบรรทัดนี้เลย ไม่ error (graceful degradation)
+    if breadcrumb:
+        body_contents.append(
+            TextComponent(text=breadcrumb, size="xxs", color="#999999", wrap=True)
+        )
 
     if badge:
         body_contents.append(
