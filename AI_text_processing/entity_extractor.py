@@ -82,7 +82,19 @@ FUZZY_SCORE_THRESHOLD = 80
 
 # เกณฑ์คะแนนขั้นต่ำสำหรับ "อัปเกรด" จากชื่อสั้นที่ exact match ไปชื่อยาว
 # ที่เจาะจงกว่า
-UPGRADE_SCORE_THRESHOLD = 85
+#
+# --- บันทึกการปรับ: 85 -> 80 (ให้เท่ากับ FUZZY_SCORE_THRESHOLD อีกครั้ง) ---
+# หลังจากลด FUZZY_SCORE_THRESHOLD เป็น 80 (แก้เคส "นำดืม") ทำให้
+# FUZZY (80) < UPGRADE (85) กลับไปขัดกับหลักการเดิมที่วางไว้ตอนแก้บั๊ก
+# "ถั่ว/มั่ว" คือ "fallback (FUZZY) เสี่ยงกว่า upgrade เพราะค้นแบบไม่มี
+# ตัวกรองเลย ควรมี threshold เข้มกว่าหรือเท่ากับ upgrade เสมอ ไม่ใช่
+# หลวมกว่า" จึงลด UPGRADE ลงมาเท่ากับ FUZZY อีกครั้งเพื่อรักษาหลักการนี้
+# ไว้ (fallback >= upgrade เสมอ) แทนที่จะปล่อยให้ FUZZY < UPGRADE ค้างไว้
+#
+# ตรวจสอบแล้วว่าปลอดภัย เพราะ upgrade เทียบกับกลุ่ม candidate ที่กรอง
+# มาแล้วว่าเกี่ยวข้องกันจริง (มีชื่อสั้นซ้อนอยู่) แคบกว่า fallback มาก
+# การลด threshold ตรงนี้จึงเสี่ยงน้อยกว่าลด FUZZY_SCORE_THRESHOLD เอง
+UPGRADE_SCORE_THRESHOLD = 80
 
 
 def load_categories():
