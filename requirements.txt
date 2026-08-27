@@ -1,0 +1,27 @@
+# ----------------------------------
+# Web server / LINE
+# ----------------------------------
+flask
+line-bot-sdk
+python-dotenv
+
+# ----------------------------------
+# HTTP requests (ใช้ใน scraping/ ทั้งหมด: get_categories.py,
+# scrap_all_product.py, scrap_current_product.py)
+# ----------------------------------
+requests
+
+# ----------------------------------
+# NLP: entity matching (fuzzy) — ใช้ใน entity_extractor.py
+# ----------------------------------
+rapidfuzz
+
+# ----------------------------------
+# NLP: BERT comparison (compare_intent.py, bert_intent.py)
+# ใช้เฉพาะส่วนเปรียบเทียบ Keyword vs Sentence-BERT ตามใบปฏิบัติการ
+# ไม่ได้ใช้ตอบ user จริง แต่ยังต้องลงถึงจะรัน compare_intent.py ได้
+# หมายเหตุ: sentence-transformers จะติดตั้ง torch มาด้วยอัตโนมัติ
+# (ไฟล์ใหญ่ ~1-2 GB โหลดครั้งแรกอาจใช้เวลาสักพัก)
+# ----------------------------------
+numpy
+sentence-transformers
